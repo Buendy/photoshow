@@ -1,13 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
-    <h3>Create album</h3>
-    {!! Form::open(['action' => 'AlbumsController@store', 'method' => 'post', 'file' => true]) !!}
+    <h3>Create Album</h3>
 
-    {{ Form::Text('name', '', ['placeholder' => 'Album name']) }}
-    {{ Form::TextArea('description', '', ['placeholder' => 'Album description']) }}
-    {{ Form::File('cover_image') }}
-    {{ Form::Submit('Submit') }}
-
+    {!! Form::open(['action' => 'AlbumsController@store', 'method' => 'post', 'files' => true]) !!}
+        {{ Form::text('name', '', ['placeholder' => 'Album name']) }}
+        {{ Form::textarea('description', '', ['placeholder' => 'Album description']) }}
+        {{ Form::file('cover_image') }}
+        {{ Form::submit('Submit') }}
     {!! Form::close() !!}
 @endsection

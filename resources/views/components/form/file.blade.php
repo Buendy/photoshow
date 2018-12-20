@@ -1,3 +1,3 @@
 <div>
-    {{Form::file($name)}}
+    {{ Form::file($name) }}
 </div>

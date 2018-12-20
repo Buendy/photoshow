@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Album;
 
 class AlbumsController extends Controller
 {
     public function index()
     {
-        return view('albums.index');
+        $albums = Album::with('Photos')->get();
+        return view('albums.index')->with('albums', $albums);
     }
 
     public function create()
@@ -18,23 +20,36 @@ class AlbumsController extends Controller
 
     public function store(Request $request)
     {
-            //Realizamos validaciones (SE PUEDEN Y SE DEBE AÑADIR MAS VALIDACIONES)
         $this->validate($request, [
-           'name' => 'required',  //El campo ha de ser requerido
-           'cover_image' => 'image|max:2000', //Se debe de subir una imagen de como máximo 2000KB
-
+            'name' => 'required',
+            'cover_image' => 'mimes:jpg,jpeg,png,bmp|max:2000'
         ]);
-            //EL nombre del fichero que ha subido el usuario (tiene el nombre que tenía en su equipo)
-        $fileNameWithExt = $request->file('cover_image')->getClientOriginalName();
-            //pathinfo() es un helper de laravel
-        $fileName = pathinfo($fileNameWithExt, PATHINFO_FILENAME);
-            //Obtenemos la extensión original con la que el usuario ha subido el fichero
-        $extension = $request->file('cover_image')->getClientOriginalExtension();
-            //La manera de de guardar el archivo (nombre, fechaSubida, extensión)
-        $fileNameToStore = $fileName . '_' . time() . '.' . $extension;
-            //Ruta donde se guardarán las imagenes, y el archivo a subir
-        $path = $request->file('cover_image')->storeAs('public/albums_covers', $fileNameToStore);
 
-        return $path;
+        $filenameWithExt = $request->file('cover_image')
+                                ->getClientOriginalName();
+
+        $filename = pathinfo($filenameWithExt,PATHINFO_FILENAME);
+        $extension = $request->file('cover_image')
+                                ->getClientOriginalExtension();
+
+        $filenameToStore = $filename . '_' . time() . '.' . $extension;
+
+        $path = $request->file('cover_image')
+                        ->storeAs('public/album_covers',$filenameToStore);
+
+        $album = new Album();
+        $album->name = $request->input('name');
+        $album->description = $request->input('description');
+        $album->cover_image = $filenameToStore;
+
+        $album->save();
+
+        return redirect('/albums')->with('success', 'Album Creado');
+    }
+
+    public function show($id)
+    {
+        $album = Album::with('Photos')->find($id);
+        return view('albums.show')->with('album', $album);
     }
 }

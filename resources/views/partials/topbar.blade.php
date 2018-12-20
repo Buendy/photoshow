@@ -4,7 +4,7 @@
             <ul class="menu">
                 <li class="menu-text">PhotoShow</li>
                 <li><a href="/">Home</a></li>
-                <li><a href="/albums/create">Create album</a></li>
+                <li><a href="/albums/create">Create Album</a></li>
             </ul>
         </div>
     </div>
